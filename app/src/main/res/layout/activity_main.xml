@@ -9,13 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <GridLayout
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView app:srcCompat="@mipmap/ic_launcher" />
-
-        </GridLayout>
+            android:layout_height="wrap_content" />
 
     </ScrollView>
 
