@@ -30,4 +30,67 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    class MovieDbQueryTask extends AsyncTask<URL, Void, String> {
+
+        Activity mContext;
+
+        MovieDbQueryTask(Activity context){
+            mContext = context;
+        }
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            URL url = urls[0];
+            String result = null;
+
+            try{
+                result = Network.getResponseFromUrl(url);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try{
+                if(s != null && !s.equals("")){
+                    JSONObject jsonObject = new JSONObject(s);
+                    JSONArray resultsArray = jsonObject.getJSONArray("results");
+
+                    List<JSONObject> jsonList = new ArrayList<JSONObject>();
+
+                    for(int i = 0; i < resultsArray.length(); i++){
+                        jsonList.add(resultsArray.getJSONObject(i));
+                    }
+
+                    mAdapter = new MovieAdapter(mContext, jsonList);
+                    mMoviesGrid.setAdapter(new ImageAdapter(mContext, jsonList));
+
+                    mMovieList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            try{
+                                JSONObject movieJson = mAdapter.getItem(i);
+
+                                Intent detailsIntent = new Intent(mContext, DetailsActivity.class);
+                                detailsIntent.putExtra(Intent.ACTION_ATTACH_DATA, movieJson.toString());
+                                startActivity(detailsIntent);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    }
 }
