@@ -60,10 +60,6 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-    public void onListItemClick(AdapterView<?> adapterView, View view, int position, long blah){
-        Toast.makeText(this, "Item " + String.valueOf(position) + " clicked.", Toast.LENGTH_LONG).show();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
