@@ -72,10 +72,19 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_settings){
-            Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
-            startActivity(openSettingsIntent);
-            return true;
+
+        URL url = null;
+
+        if(item.getItemId() == R.id.action_top_rated){
+            url = Network.buildQueryUrl(MovieDb.Order_Top_Rated);
+        }
+        else if(item.getItemId() == R.id.action_popular){
+            url = Network.buildQueryUrl(MovieDb.Order_Popular);
+        }
+
+        if(url != null){
+            MovieDbQueryTask task = new MovieDbQueryTask(this);
+            task.execute(url);
         }
 
         return super.onOptionsItemSelected(item);
