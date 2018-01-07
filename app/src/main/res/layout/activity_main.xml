@@ -11,12 +11,17 @@
         android:layout_height="match_parent"
         android:background="@color/black">
 
-        <!--<ListView
+        <TextView
+            android:id="@+id/tv_error_feedback"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/lv_movies">
+            android:layout_height="wrap_content"
+            android:text="Error occurred."
+            android:textColor="@color/white"></TextView>
 
-        </ListView>-->
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/pb_loading"/>
 
         <GridView
             android:layout_width="match_parent"
