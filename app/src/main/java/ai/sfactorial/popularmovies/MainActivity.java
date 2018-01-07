@@ -3,6 +3,7 @@ package ai.sfactorial.popularmovies;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,10 +12,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,31 +29,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.sfactorial.popularmovies.adapters.ImageAdapter;
-import ai.sfactorial.popularmovies.models.Settings;
 import ai.sfactorial.popularmovies.utilities.MovieDb;
 import ai.sfactorial.popularmovies.utilities.Network;
 
 public class MainActivity extends AppCompatActivity{
-    MovieAdapter mAdapter;
-    ListView mMovieList;
-    GridView mMoviesGrid;
 
+    GridView mMoviesGrid;
+    ProgressBar mProgress;
+    TextView mErrorFeedback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mMovieList = (ListView) findViewById(R.id.lv_movies);
         mMoviesGrid = (GridView) findViewById(R.id.gv_movies);
+        mProgress = (ProgressBar) findViewById(R.id.pb_loading);
+        mErrorFeedback = (TextView) findViewById(R.id.tv_error_feedback);
+
+        mProgress.setVisibility(View.GONE);
+        mErrorFeedback.setVisibility(View.GONE);
 
         try{
-            URL url = Network.buildQueryUrl(Settings.SortOrder);
+            URL url = Network.buildQueryUrl(MovieDb.Order_Popular);
             MovieDbQueryTask movieDbQueryTask = new MovieDbQueryTask(this);
             movieDbQueryTask.execute(url);
         }
         catch (Exception e){
-            //Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
@@ -95,6 +100,11 @@ public class MainActivity extends AppCompatActivity{
         }
 
         @Override
+        protected void onPreExecute() {
+            mProgress.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected String doInBackground(URL... urls) {
             URL url = urls[0];
             String result = null;
@@ -119,22 +129,22 @@ public class MainActivity extends AppCompatActivity{
             try{
                 if(s != null && !s.equals("")){
                     JSONObject jsonObject = new JSONObject(s);
-                    JSONArray resultsArray = jsonObject.getJSONArray("results");
+                    JSONArray movieResults = jsonObject.getJSONArray("results");
 
-                    List<JSONObject> jsonList = new ArrayList<JSONObject>();
+                    List<JSONObject> movies = new ArrayList<JSONObject>();
 
-                    for(int i = 0; i < resultsArray.length(); i++){
-                        jsonList.add(resultsArray.getJSONObject(i));
+                    for(int i = 0; i < movieResults.length(); i++){
+                        movies.add(movieResults.getJSONObject(i));
                     }
 
-                    mAdapter = new MovieAdapter(mContext, jsonList);
-                    mMoviesGrid.setAdapter(new ImageAdapter(mContext, jsonList));
+                    final ImageAdapter imageAdapter = new ImageAdapter(mContext, movies);
+                    mMoviesGrid.setAdapter(imageAdapter);
 
-                    mMovieList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    mMoviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             try{
-                                JSONObject movieJson = mAdapter.getItem(i);
+                                JSONObject movieJson = imageAdapter.getItem(i);
 
                                 Intent detailsIntent = new Intent(mContext, DetailsActivity.class);
                                 detailsIntent.putExtra(Intent.ACTION_ATTACH_DATA, movieJson.toString());
@@ -146,11 +156,14 @@ public class MainActivity extends AppCompatActivity{
                         }
                     });
                 }
+
+                mProgress.setVisibility(View.GONE);
             }
             catch (Exception e){
                 e.printStackTrace();
             }
 
         }
+
     }
 }
