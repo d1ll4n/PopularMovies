@@ -108,6 +108,11 @@ public class MainActivity extends AppCompatActivity{
             }
             catch (Exception e){
                 e.printStackTrace();
+                mErrorFeedback.setText(R.string.network_error);
+
+                mProgress.setVisibility(View.INVISIBLE);
+                mMoviesGrid.setVisibility(View.INVISIBLE);
+                mErrorFeedback.setVisibility(View.VISIBLE);
             }
 
             return result;
