@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingHorizontal="4dp"
     android:paddingVertical="4dp">
 
-    <ImageView
-        android:id="@+id/iv_details_poster"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/tv_details_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Title"
-        android:textSize="24sp" />
-
-    <TextView
-        android:id="@+id/tv_details_plot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Plot" />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_details_poster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/tv_details_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rating: "
-            android:textStyle="bold" />
+            android:text="Title"
+            android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/tv_details_rating"
+            android:id="@+id/tv_details_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rating" />
-    </LinearLayout>
+            android:text="Plot" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
-        <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rating: "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_details_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rating" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Release date: "
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_details_release_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Release date" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Release date: "
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_details_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Release date" />
 
-
+        </LinearLayout>
 </LinearLayout>
+    </ScrollView>

@@ -15,7 +15,7 @@
             android:id="@+id/tv_error_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Error occurred."
+            android:text=""
             android:textColor="@color/white"></TextView>
 
         <ProgressBar

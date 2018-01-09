@@ -3,6 +3,8 @@ package ai.sfactorial.popularmovies;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -29,14 +31,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.sfactorial.popularmovies.adapters.ImageAdapter;
+import ai.sfactorial.popularmovies.tasks.MovieDbQueryTask;
 import ai.sfactorial.popularmovies.utilities.MovieDb;
 import ai.sfactorial.popularmovies.utilities.Network;
 
 public class MainActivity extends AppCompatActivity{
 
-    GridView mMoviesGrid;
-    ProgressBar mProgress;
-    TextView mErrorFeedback;
+    public GridView mMoviesGrid;
+    public ProgressBar mProgress;
+    public TextView mErrorFeedback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +54,32 @@ public class MainActivity extends AppCompatActivity{
         mErrorFeedback.setVisibility(View.GONE);
 
         try{
-            URL url = Network.buildQueryUrl(MovieDb.Order_Popular);
-            MovieDbQueryTask movieDbQueryTask = new MovieDbQueryTask(this);
-            movieDbQueryTask.execute(url);
+            ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+            if(isConnected){
+                URL url = Network.buildQueryUrl(MovieDb.Order_Popular);
+                MovieDbQueryTask movieDbQueryTask = new MovieDbQueryTask(this);
+                movieDbQueryTask.execute(url);
+            }
+            else{
+                showErrorFeedback("No internet connection. Please try again later.");
+            }
+
         }
         catch (Exception e){
-            e.printStackTrace();
+
         }
     }
 
-    public void onSearchClick(View view){
+    public void showErrorFeedback(String errorMessage){
+        mErrorFeedback.setText(errorMessage);
 
-
+        mProgress.setVisibility(View.GONE);
+        mMoviesGrid.setVisibility(View.GONE);
+        mErrorFeedback.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -91,79 +108,5 @@ public class MainActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    class MovieDbQueryTask extends AsyncTask<URL, Void, String> {
 
-        Activity mContext;
-
-        MovieDbQueryTask(Activity context){
-            mContext = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            mProgress.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            URL url = urls[0];
-            String result = null;
-
-            try{
-                result = Network.getResponseFromUrl(url);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-                mErrorFeedback.setText(R.string.network_error);
-
-                mProgress.setVisibility(View.INVISIBLE);
-                mMoviesGrid.setVisibility(View.INVISIBLE);
-                mErrorFeedback.setVisibility(View.VISIBLE);
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try{
-                if(s != null && !s.equals("")){
-                    JSONObject jsonObject = new JSONObject(s);
-                    JSONArray movieResults = jsonObject.getJSONArray("results");
-
-                    List<JSONObject> movies = new ArrayList<JSONObject>();
-
-                    for(int i = 0; i < movieResults.length(); i++){
-                        movies.add(movieResults.getJSONObject(i));
-                    }
-
-                    final ImageAdapter imageAdapter = new ImageAdapter(mContext, movies);
-                    mMoviesGrid.setAdapter(imageAdapter);
-
-                    mMoviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            try{
-                                JSONObject movieJson = imageAdapter.getItem(i);
-
-                                Intent detailsIntent = new Intent(mContext, DetailsActivity.class);
-                                detailsIntent.putExtra(Intent.ACTION_ATTACH_DATA, movieJson.toString());
-                                startActivity(detailsIntent);
-                            }
-                            catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-
-                mProgress.setVisibility(View.GONE);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-
-    }
 }

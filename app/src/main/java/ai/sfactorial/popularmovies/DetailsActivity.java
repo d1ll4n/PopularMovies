@@ -15,6 +15,7 @@ import org.w3c.dom.Text;
 
 import java.net.URL;
 
+import ai.sfactorial.popularmovies.models.Movie;
 import ai.sfactorial.popularmovies.utilities.MovieDb;
 import ai.sfactorial.popularmovies.utilities.Network;
 
@@ -41,18 +42,14 @@ public class DetailsActivity extends AppCompatActivity {
                 mRating = (TextView) findViewById(R.id.tv_details_rating);
                 mPoster  = (ImageView) findViewById(R.id.iv_details_poster);
 
-                JSONObject data = new JSONObject(detailsIntent.getStringExtra(Intent.ACTION_ATTACH_DATA));
-                String title = data.getString("original_title");
-                String plot = data.getString("overview");
-                String releaseDate = data.getString("release_date");
-                double rating = data.getDouble("vote_average");
-                String posterPath = data.getString("poster_path");
-                URL posterUrl = Network.getFullPosterUrl(posterPath, MovieDb.Size_W500);
+                Movie movie = (Movie) detailsIntent.getParcelableExtra(Intent.ACTION_ATTACH_DATA);
 
-                mTitle.setText(title);
-                mPlot.setText(plot);
-                mReleaseDate.setText(releaseDate);
-                mRating.setText(String.valueOf(rating));
+                URL posterUrl = Network.getFullPosterUrl(movie.getPosterPath(), MovieDb.Size_W500);
+
+                mTitle.setText(movie.getTitle());
+                mPlot.setText(movie.getOverview());
+                mReleaseDate.setText(movie.getReleaseDate());
+                mRating.setText(String.valueOf(movie.getRating()));
                 Picasso.with(this).load(posterUrl.toString()).into(mPoster);
 
             }

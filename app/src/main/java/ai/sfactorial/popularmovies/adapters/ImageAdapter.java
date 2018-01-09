@@ -16,6 +16,7 @@ import java.util.List;
 
 import ai.sfactorial.popularmovies.R;
 import ai.sfactorial.popularmovies.customViews.MoviePosterImageView;
+import ai.sfactorial.popularmovies.models.Movie;
 import ai.sfactorial.popularmovies.utilities.MovieDb;
 import ai.sfactorial.popularmovies.utilities.Network;
 
@@ -25,9 +26,9 @@ import ai.sfactorial.popularmovies.utilities.Network;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private List<JSONObject> mData;
+    private List<Movie> mData;
 
-    public ImageAdapter(Context context, List<JSONObject> data) {
+    public ImageAdapter(Context context, List<Movie> data) {
         mContext = context;
         mData = data;
     }
@@ -36,7 +37,7 @@ public class ImageAdapter extends BaseAdapter {
         return mData.size();
     }
 
-    public JSONObject getItem(int position) {
+    public Movie getItem(int position) {
         return mData.get(position);
     }
 
@@ -50,18 +51,14 @@ public class ImageAdapter extends BaseAdapter {
 
         try {
 
-            JSONObject jsonObject = getItem(position);
-            String posterPath = jsonObject.getString("poster_path");
-            URL posterUrl = Network.getFullPosterUrl(posterPath, MovieDb.Size_W185);
+            Movie movie = getItem(position);
+            URL posterUrl = Network.getFullPosterUrl(movie.getPosterPath(), MovieDb.Size_W185);
 
             if (convertView == null) {
-                // if it's not recycled, initialize some attributes
-                imageView = new MoviePosterImageView(mContext);
-
-
-
-                //imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                //imageView = new MoviePosterImageView(mContext);
+                imageView = new ImageView(mContext);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setAdjustViewBounds(true);
             } else {
                 imageView = (ImageView) convertView;
             }

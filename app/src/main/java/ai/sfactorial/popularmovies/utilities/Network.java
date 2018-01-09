@@ -24,7 +24,7 @@ public class Network {
     private static final String PARAM_API_KEY = "api_key";
 
     //TODO (1): Insert The Movie DB API key.
-    private static final String MOVIEDb_API_KEY = "insert api key here";
+    private static final String MOVIEDb_API_KEY = "ENTER API KEY";
 
     public static URL getFullPosterUrl(String posterPath, String posterSize){
 
